@@ -4,14 +4,12 @@ import Graphics.Collage exposing (toForm, group, move, collage)
 import Graphics.Element exposing (..)
 
 import Player
-import Input exposing (ArrowsKeys)
+import Action exposing (Action(..), Direction(..))
 
 type alias Dimensions = (Int, Int)
 
 type alias World =
   { player1 : Player.Player
-  , deltaX : Int
-  , deltaY : Int
   }
   
 world : World
@@ -20,16 +18,18 @@ world =
            , y = 10
            }
   in { player1 = p1
-     , deltaX = 6
-     , deltaY = 6
      }
 
 
-update : (Float, ArrowsKeys) -> World -> World
-update (d, keys) world =
-  let player1' = Player.update world.player1 (keys.x, world.deltaX) (keys.y, world.deltaY)
-  in
-    { world | player1 = player1' }
+update : Action -> World -> World
+update action world =
+  case action of
+    Move direction ->
+      let player1' = Player.update world.player1 (Move direction)
+      in
+        { world | player1 = player1' }
+    NoOp ->
+      world
 
 view : Dimensions -> World -> Element
 view (w, h) world =
