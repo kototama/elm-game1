@@ -10,8 +10,8 @@ type alias ArrowsKeys =
   , y : Int
   }
 
-inputToAction : Float -> ArrowsKeys -> Action
-inputToAction _ arrows =
+inputToAction : ArrowsKeys -> Action
+inputToAction arrows =
   if arrows.y > 0 && arrows.x == 0 then
     Move North
   else if arrows.y < 0 && arrows.x == 0 then
@@ -36,4 +36,4 @@ input =
   let
     t = Signal.map (\x -> x) AnimationFrame.frame
   in
-    Signal.sampleOn t (Signal.map2 inputToAction t Keyboard.arrows)
+    Signal.sampleOn t (Signal.map inputToAction Keyboard.arrows)
