@@ -6,7 +6,8 @@ Experiments with [Elm](http://elm-lang.org/).
 
 Run these commands to start the game:
 
-```bash
+```
+bash
 elm-reactor
 ```
 
