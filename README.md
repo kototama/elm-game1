@@ -1,6 +1,6 @@
 ## Description
 
-Experiments with (Elm)[http://elm-lang.org/].
+Experiments with [Elm](http://elm-lang.org/).
 
 ## Instrutions
 
