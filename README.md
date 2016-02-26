@@ -2,7 +2,7 @@
 
 Experiments with [Elm](http://elm-lang.org/).
 
-## Instrutions
+## Instructions
 
 Run these commands to start the game:
 
