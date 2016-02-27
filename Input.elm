@@ -1,7 +1,10 @@
 module Input (input, ArrowsKeys) where
 
-import AnimationFrame
+import Set
 import Keyboard
+import Char exposing (KeyCode)
+
+import AnimationFrame
 
 import Action exposing (Action(..), Direction(..))
 
@@ -31,9 +34,46 @@ inputToAction arrows =
   else
     NoOp
 
+
+-- This is copied from core.Keyboard.Directions which is not exposed
+type alias Directions =
+    { up : KeyCode
+    , down : KeyCode
+    , left : KeyCode
+    , right : KeyCode
+    }
+
+-- This is copied from core.Keyboard.toXY which is not exposed
+toXY : Directions -> Set.Set KeyCode -> { x : Int, y : Int }
+toXY {up,down,left,right} keyCodes =
+  let is keyCode =
+        if Set.member keyCode keyCodes
+          then 1
+          else 0
+  in
+      { x = is right - is left
+      , y = is up - is down
+      }
+
+-- This is copied from core.Keyboard.toXY which is not exposed
+dropMap : (a -> b) -> Signal a -> Signal b
+dropMap f signal =
+  Signal.dropRepeats (Signal.map f signal)
+
+{-| Just like the arrows signal, but this uses keys z, q, s, and d,
+which are common controls for many computer games on a french layout
+keyboard.
+-}
+zqsd : Signal { x:Int, y:Int }
+zqsd =
+  dropMap (toXY { up = 90,
+                    down = 83,
+                    left = 81,
+                    right = 68 }) Keyboard.keysDown
+
 input : Signal Action
 input =
   let
     t = Signal.map (\x -> x) AnimationFrame.frame
   in
-    Signal.sampleOn t (Signal.map inputToAction Keyboard.arrows)
+    Signal.sampleOn t (Signal.map inputToAction zqsd)
