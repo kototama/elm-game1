@@ -3,10 +3,11 @@ module Input (input, MoveKeys) where
 import Set
 import Keyboard
 import Char exposing (KeyCode)
+import Debug exposing (log)
 
 import AnimationFrame
 
-import Action exposing (Action(..), Direction(..))
+import Action exposing (Action(..), ManyActions, Direction(..))
 
 type alias MoveKeys =
   { x : Int
@@ -14,26 +15,33 @@ type alias MoveKeys =
   }
 
 inputToAction : MoveKeys -> Action
-inputToAction arrows =
-  if arrows.y > 0 && arrows.x == 0 then
+inputToAction keys =
+  if keys.y > 0 && keys.x == 0 then
     Move North
-  else if arrows.y < 0 && arrows.x == 0 then
+  else if keys.y < 0 && keys.x == 0 then
     Move South
-  else if arrows.x > 0 && arrows.y == 0  then
+  else if keys.x > 0 && keys.y == 0  then
     Move East
-  else if arrows.x < 0 && arrows.y == 0  then
+  else if keys.x < 0 && keys.y == 0  then
     Move West
-  else if arrows.x > 0 && arrows.y > 0  then
+  else if keys.x > 0 && keys.y > 0  then
     Move NorthEast
-  else if arrows.x < 0 && arrows.y > 0  then
+  else if keys.x < 0 && keys.y > 0  then
     Move NorthWest
-  else if arrows.x > 0 && arrows.y < 0  then
+  else if keys.x > 0 && keys.y < 0  then
     Move SouthEast
-  else if arrows.x < 0 && arrows.y < 0  then
+  else if keys.x < 0 && keys.y < 0  then
     Move SouthWest
   else
     NoOp
 
+inputsToManyActions : MoveKeys -> MoveKeys -> ManyActions
+inputsToManyActions letters arrows =
+  let actionP1 = inputToAction letters
+      actionP2 = inputToAction arrows
+  in
+    { actionPlayer1 = actionP1
+    , actionPlayer2 = actionP2 }
 
 -- This is copied from core.Keyboard.Directions which is not exposed
 type alias Directions =
@@ -71,9 +79,9 @@ zqsd =
                 , left = 81
                 , right = 68 }) Keyboard.keysDown
 
-input : Signal Action
+input : Signal ManyActions
 input =
   let
     t = Signal.map (\x -> x) AnimationFrame.frame
   in
-    Signal.sampleOn t (Signal.map inputToAction zqsd)
+    Signal.sampleOn t (Signal.map2 inputsToManyActions zqsd Keyboard.arrows)
