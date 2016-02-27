@@ -1,6 +1,6 @@
 module World (World, world, update, view) where
 
-import Graphics.Collage exposing (toForm, group, move, collage)
+import Graphics.Collage exposing (Form, toForm, group, move, collage)
 import Graphics.Element exposing (..)
 
 
@@ -18,12 +18,15 @@ world : World
 world =
   let p1 = { x = 10
            , y = 10
-           }
-      p2 = { x = 100
-           , y = 100
+           , width = 60
+           , height = 60
+           , bodyImg = "/imgs/marx_head.jpg"
            }
   in { player1 = p1
-     , player2 = p2
+     , player2 = { p1
+                   | x = 100
+                   , y = 100
+                   , bodyImg = "/imgs/hegel_head.jpg" }
      }
 
 update : ManyActions -> World -> World
@@ -35,17 +38,19 @@ update actions world =
    in
      w2
 
+createForm : Player.Player -> Form
+createForm player =
+  let forms = [
+       toForm (image player.width player.height player.bodyImg)
+      ]
+  in
+    group forms |> move (toFloat player.x, toFloat player.y)
+
 view : Dimensions -> World -> Element
 view (w, h) world =
-  let player1 = world.player1
-      player2 = world.player2
-      p1forms = [
-       toForm (image 60 60 "/imgs/marx_head.jpg")
-      ]
-      p1form = group p1forms |> move (toFloat player1.x, toFloat player1.y)
-      p2forms = [
-       toForm (image 60 60 "/imgs/hegel_head.jpg")
-       ]
-      p2form = group p2forms |> move (toFloat player2.x, toFloat player2.y)
-    in
+  let p1 = world.player1
+      p2 = world.player2
+      p1form = createForm world.player1
+      p2form = createForm world.player2
+  in
       collage w h [p1form, p2form]

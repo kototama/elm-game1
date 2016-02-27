@@ -5,6 +5,9 @@ import Action exposing (Action(..), Direction(..))
 type alias Player =
   { x : Int
   , y : Int
+  , width : Int
+  , height : Int
+  , bodyImg : String
   }
 
 deltaX: Int
