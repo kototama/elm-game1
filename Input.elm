@@ -1,4 +1,4 @@
-module Input (input, ArrowsKeys) where
+module Input (input, MoveKeys) where
 
 import Set
 import Keyboard
@@ -8,12 +8,12 @@ import AnimationFrame
 
 import Action exposing (Action(..), Direction(..))
 
-type alias ArrowsKeys =
+type alias MoveKeys =
   { x : Int
   , y : Int
   }
 
-inputToAction : ArrowsKeys -> Action
+inputToAction : MoveKeys -> Action
 inputToAction arrows =
   if arrows.y > 0 && arrows.x == 0 then
     Move North
@@ -64,12 +64,12 @@ dropMap f signal =
 which are common controls for many computer games on a french layout
 keyboard.
 -}
-zqsd : Signal { x:Int, y:Int }
+zqsd : Signal MoveKeys
 zqsd =
-  dropMap (toXY { up = 90,
-                    down = 83,
-                    left = 81,
-                    right = 68 }) Keyboard.keysDown
+  dropMap (toXY { up = 90
+                , down = 83
+                , left = 81
+                , right = 68 }) Keyboard.keysDown
 
 input : Signal Action
 input =
